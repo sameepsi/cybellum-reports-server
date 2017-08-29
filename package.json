@@ -1,0 +1,22 @@
+{
+  "name": "reportsserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "startApp": "SET \"NODE_ENV=production\" && node server.js",
+    "startAppLinux": "export NODE_ENV=production && node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "lodash": "^4.17.4",
+    "method-override": "^2.3.9",
+    "mongodb": "^2.2.31",
+    "mongoose": "^4.11.7",
+    "mongoose-paginate": "^5.0.3",
+    "yargs": "^8.0.2"
+  }
+}
