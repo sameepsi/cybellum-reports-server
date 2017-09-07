@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node server-heroku.js",
     "startApp": "SET \"NODE_ENV=production\" && node server.js",
     "startAppLinux": "export NODE_ENV=production && node server.js"
   },
