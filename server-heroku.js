@@ -5,27 +5,11 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const yargs = require('yargs');
 var methodOverride = require("method-override");
 
 const {db} = require('./db/mongoose');
 
-const argv=yargs.options({
-  p:{
-    describe:'port number',
-    demand:true,
-    alias:'port',
-    string:true
-  },
-  db:{
-    describe:'mongodb URI of documents db',
-    demand:true,
-    alias:'docDb',
-    string:true
-  }
-}).help()
-.alias('help','h')
-.argv;
+
 
 var port = process.env.PORT || 3000;
 
