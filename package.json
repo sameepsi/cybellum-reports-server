@@ -8,6 +8,9 @@
     "startApp": "SET \"NODE_ENV=production\" && node server.js",
     "startAppLinux": "export NODE_ENV=production && node server.js"
   },
+  "engines": {
+    "node": "8.1.2"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
