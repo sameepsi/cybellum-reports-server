@@ -4,6 +4,8 @@ var mongoose = require("mongoose");
 
 var {getEditableFields, getCustomFields} = require("./Constants")
 var {Document} = require("../../../models/document");
+var docExtraInfo = require("../../../models/documentExtraInfo");
+
 var {Folder} = require("../../../models/folder");
 
 
@@ -14,9 +16,7 @@ const checkIfValidMongoObjectId = (id) => {
 router.get("/document/editableFields", async(req, res) => {
   res.status(200).send(getEditableFields());
 });
-router.get("/document/customFields", async(req, res) => {
-  res.status(200).send(getCustomFields());
-});
+
 router.put("/document/:id", async(req, res)=>{
   try  {
     var body = req.body;
@@ -26,14 +26,35 @@ router.put("/document/:id", async(req, res)=>{
     }
 
     if(body && Object.keys(body).length>0 ){
+      var data={};
       Object.keys(body).forEach((key)=>{
+        data[key]=body[key];
         if(getEditableFields().indexOf(key)===-1){
           return res.status(500).send();
         }
       });
+      console.log(body);
+      var extraInfo = body.extra_info;
+      var savedExtraInfo;
+      if(extraInfo && extraInfo.data){
+      if(extraInfo._id){
+        savedExtraInfo = await docExtraInfo.findByIdAndUpdate(extraInfo._id, {
+          $set:{
+            data:extraInfo.data
+          }
+        })
+      }
+      else{
+          savedExtraInfo = new docExtraInfo({
+            data:extraInfo.data
+          });
+          await savedExtraInfo.save();
+      }
+      data["extra_info"] = savedExtraInfo;
+    }
       var document = await Document.findOneAndUpdate({_id:mongoose.Types.ObjectId(id)},{
-        $set:body
-      },{new: true})
+        $set:data
+      },{new: true}).populate("extra_info").exec();
       res.status(200).send(document);
     }
     res.status(500).send();
@@ -50,7 +71,7 @@ router.get("/document/:id", async(req, res) => {
     if(!checkIfValidMongoObjectId(id)){
       res.status(500).send();
     }
-    var document = await Document.findById(id);
+    var document = await Document.findById(id).populate("extra_info").exec();
     return res.status(200).send(document);
   }catch(err){
     res.status(500).send();

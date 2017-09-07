@@ -21,7 +21,21 @@ var DocumentSchema = Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:"folder"
   },
-  custom_fields:[]
+  extra_info:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"document_extra_info"
+  },
+  instruction_descriptor:{
+    type:Schema.Types.Mixed
+  },
+  heap_info:{
+    type:Schema.Types.Mixed
+  },
+  runtime_information:{
+    type:Schema.Types.Mixed
+  },
+  stacktrace : []
+
 });
 
 
@@ -31,7 +45,7 @@ DocumentSchema.methods.toJSON = function () {
   var document = this;
   var docObject = document.toObject();
 
-  var returnObject = _.pick(docObject, ['_id','explosion_address', 'original_path', 'target_address', 'parent_folder', 'custom_fields']);
+  var returnObject = _.pick(docObject, ['_id','target_address','instruction_descriptor', 'original_path', 'runtime_information', 'stacktrace', 'heap_info', 'parent_folder', 'extra_info']);
 
   return returnObject;
 };

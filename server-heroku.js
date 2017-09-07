@@ -29,13 +29,6 @@ const argv=yargs.options({
 
 var port = process.env.PORT || 3000;
 
-if(argv.port){
-  port = argv.port;
-}
-
-if(argv.docDb){
-  process.env.MONOGO_DB = argv.docDb;
-}
 db().then(async(res)=>{
   try{
 
