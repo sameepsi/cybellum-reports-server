@@ -8,6 +8,7 @@ var dbConnection;
 const db = () =>{
 
 return new Promise((resolve, reject)=>{
+  console.log(process.env.MONOGO_DB);
  dbConnection = mongoose.createConnection(process.env.MONOGO_DB);
 
  dbConnection.on('connected', function() {
