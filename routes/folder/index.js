@@ -204,9 +204,10 @@ const recursivelyDeleteFolder = async(id) =>{
     for(let childId of folder.child){
       await recursivelyDeleteFolder(childId);
     }
-    for(let doc of folder.document){
-      await removeFolderRefFromDoc(doc);
-      var index = folder.document.indexOf(doc);
+    var documents = folder.document;
+    while(documents.length>0){
+      await removeFolderRefFromDoc(documents[0]);
+      var index = folder.document.indexOf(documents[0]);
       if(index>-1){
         folder.document.splice(index, 1);
         await folder.save();
