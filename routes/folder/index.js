@@ -15,6 +15,16 @@ router.get("/folder", async(req, res)=>{
     folders.forEach((folder)=>{
       responseObject[folder._id]=folder;
     });
+    var documentsWithoutFolders = await Document.count({
+      parent_folder: { $exists: false }
+    });
+    var obj = {
+      _id:"0",
+      child:[],
+      document:new Array(documentsWithoutFolders),
+      name:"Default"
+    }
+    responseObject['0']=obj;
     res.status(200).send(responseObject);
   }catch(err){
     res.status(500).send();
@@ -118,20 +128,20 @@ router.put("/folder/:id", async(req, res) => {
           return res.status(500).send();
         }
         var bool = await checkIfMovePossible(folderId, parent)
-      if(bool===false){
-        return res.status(500).send();
-      }
-      if(folder.parent){
-        var parentFolder = await Folder.findById(folder.parent);
-        if(parentFolder){
-          var index = parentFolder.child.indexOf(folderId);
-          if(index>-1){
-            parentFolder.child.splice(index, 1);
-            await parentFolder.save();
-          }
+        if(bool===false){
+          return res.status(500).send();
         }
+        if(folder.parent){
+          var parentFolder = await Folder.findById(folder.parent);
+          if(parentFolder){
+            var index = parentFolder.child.indexOf(folderId);
+            if(index>-1){
+              parentFolder.child.splice(index, 1);
+              await parentFolder.save();
+            }
+          }
 
-      }
+        }
         var newParent = await Folder.findById(parent);
         if(newParent){
           newParent.child.push(folder);
