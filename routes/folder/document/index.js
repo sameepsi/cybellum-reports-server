@@ -304,4 +304,31 @@ router.post("/folder/:folderId/document", async(req, res)=>{
   }
 });
 
+/*
+GET all documents with specific vulnerability_type
+*/
+
+router.get("/document", async(req,res) => {
+  try{
+    var vulnerability_type = req.query.vulnerability_type;
+    if(!vulnerability_type){
+      return res.status(500).send();
+    }
+    var limit = req.query.limit || 10;
+    var page = req.query.page || 1;
+    if(limit>100){
+      limit = 100;
+    }
+    limit = parseInt(limit);
+    page = parseInt(page);
+
+    var documents = await Document.paginate({
+      vulnerability_type
+    },{ page, limit });
+    return res.status(200).send(documents);
+  }catch(err){
+    console.log(err);
+    res.status(500).send();
+  }
+});
 module.exports = router;

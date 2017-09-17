@@ -4,7 +4,7 @@ var mongoose = require("mongoose");
 
 var {Document} = require("../../models/document");
 var {Folder} = require("../../models/folder");
-
+var folderNames = require("./Constants");
 /**API to get all folders in the System GET /folder
 *
 */
@@ -27,6 +27,60 @@ router.get("/folder", async(req, res)=>{
     responseObject['0']=obj;
     res.status(200).send(responseObject);
   }catch(err){
+    res.status(500).send();
+  }
+});
+
+/*
+GET /folder/new- This will send new folder structure as per latest discussion
+Not removing previous structure as of now.
+*/
+router.get("/folder/new", async(req, res) => {
+  try{
+    var documents = await Document.aggregate({$match: {vulnerability_type: {
+      $gte:0
+    }}},{
+      $group:{
+        _id:"$vulnerability_type",
+        total:{$sum:1}
+
+      }
+    });
+    var folders = {};
+    for(var i=0;i<=6;i++){
+      var parent=undefined;
+      if(i===0 ||i===1 ||i===2 ||i===3){
+        parent=-1;
+      }
+      else if(i===4 || i===5){
+        parent=-2;
+      }
+      folders[i]={
+        _id:i,
+        name:folderNames[i],
+        count:0,
+        parent,
+        child:[]
+      }
+    }
+    documents.forEach((document)=>{
+      folders[document._id].count = document.total;
+    });
+    folders['-1']={
+      _id:-1,
+      name:"Heap vulnerabilities",
+      count:0,
+      child:[0,1,2,3]
+    }
+    folders['-2']={
+      _id:-2,
+      name:"Stack vulnerabilities",
+      count:0,
+      child:[4,5]
+    }
+    res.send(folders);
+  }catch(err){
+    console.log(err);
     res.status(500).send();
   }
 });

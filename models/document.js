@@ -17,6 +17,9 @@ var DocumentSchema = Schema({
   target_address:{
     type: Number
   },
+  vulnerability_type:{
+    type:Number
+  },
   parent_folder:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"folder"
@@ -45,7 +48,7 @@ DocumentSchema.methods.toJSON = function () {
   var document = this;
   var docObject = document.toObject();
 
-  var returnObject = _.pick(docObject, ['_id','target_address','instruction_descriptor', 'original_path', 'runtime_information', 'stacktrace', 'heap_info', 'parent_folder', 'extra_info']);
+  var returnObject = _.pick(docObject, ['_id','vulnerability_type','target_address','instruction_descriptor', 'original_path', 'runtime_information', 'stacktrace', 'heap_info', 'parent_folder', 'extra_info']);
 
   return returnObject;
 };
